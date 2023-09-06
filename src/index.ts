@@ -1,7 +1,6 @@
-import { greetUser } from '$utils/greet';
+import { jobylon } from './jobylon';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  const name = 'John Doe';
-  greetUser(name);
+  jobylon();
 });
