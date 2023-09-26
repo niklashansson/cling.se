@@ -24,23 +24,34 @@ async function fetchJobs() {
     const data = await req.json();
 
     const jobs = data.map((job) => {
+      const locationsStr = job.locations
+        .map(({ location }) => {
+          const { city, country } = location;
+          const str = `${city}, ${country}`;
+
+          return str;
+        })
+        .join(' - ');
+
       return {
         title: job.title,
-        descr: job.descr,
+        function: job.function,
         url: job.urls.ad,
-        location: job.location,
+        locations: locationsStr,
       };
     });
 
     state.jobs = [...jobs];
     if (!state.jobs) return;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
 function generateMarkup(job) {
-  const markup = `<div class="career-work_job_wrapper"><div class="career-work_job_title">${job.title}</div><div class="career-work_job_divider"></div><div class="career-work_job_location">${job.descr}</div><div class="career-work_job_link-wrapper"><a href="${job.url}" target="_blank" class="button w-inline-block"><div class="career-work_job_link-text">Read more</div></a></div></div>`;
+  const markup = `<div class="career-work_job_wrapper"><div class="career-work_job_title">${job.title}</div><div class="career-work_job_divider"></div><div class="career-work_job_location">${job.locations}</div><div class="career-work_job_link-wrapper"><div class="career-work_job-function"><div class="career-work_job_button-icon w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+  <circle cx="8" cy="8" r="8" fill="white"></circle>
+</svg></div><div class="text-color-white">${job.function}</div></div><a href="${job.url}" target="_blank" class="text-size-medium text-weight-xbold">read more</a></div></div>`;
 
   const parser = new DOMParser();
   const html = parser.parseFromString(markup, 'text/html');
